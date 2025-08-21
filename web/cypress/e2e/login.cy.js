@@ -1,33 +1,34 @@
 describe("Login", () => {
   it("Deve realizar login com sucesso", () => {
-    cy.viewport(1440, 900);
-    cy.visit("http://localhost:3000");
+    cy.start();
 
-    cy.get("#email").type("papito@webdojo.com");
-    cy.get("#password").type("katana123");
-
-    cy.contains("button", "Entrar").click();
+    cy.submitLoginForm("papito@webdojo.com", "katana123");
 
     cy.get('[data-cy="user-name"]')
       .should("be.visible")
-      .and("contain", "Fernando Papito");
+      .and("have.text", "Fernando Papito");
 
     cy.get('[data-cy="welcome-message"]')
       .should("be.visible")
       .and(
-        "contain",
+        "have.text",
         "Olá QA, esse é o seu Dojo para aprender Automação de Testes."
       );
   });
 
-  it.only("Não deve realizar login com senha inválida", () => {
-    cy.viewport(1440, 900);
-    cy.visit("http://localhost:3000");
+  it("Não deve realizar login com senha inválida", () => {
+    cy.start();
 
-    cy.get("#email").type("papito@webdojo.com");
-    cy.get("#password").type("katana321");
+    cy.submitLoginForm("papito@webdojo.com", "senhaerrada");
 
-    cy.contains("button", "Entrar").click();
+    cy.contains('Acesso negado! Tente novamente.')
+      .should("be.visible")
+  });
+
+  it("Não deve realizar login com email não cadastrado", () => {
+    cy.start();
+
+    cy.submitLoginForm("404@webdojo.com", "katana123");
 
     cy.contains('Acesso negado! Tente novamente.')
       .should("be.visible")
