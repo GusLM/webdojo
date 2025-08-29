@@ -75,12 +75,15 @@ describe("Formulário de Consultoria", () => {
 
     cy.contains("button", "Enviar formulário").click();
 
-    cy.contains(
-      "Sua solicitação de consultoria foi enviada com sucesso! Em breve, nossa equipe entrará em contato através do email fornecido."
-    ).should("be.visible");
+    cy.get('.modal', {timeout: 7000})
+      .should("be.visible")
+      .find('.modal-content')
+      .should("be.visible")
+      .and('have.text', 'Sua solicitação de consultoria foi enviada com sucesso! Em breve, nossa equipe entrará em contato através do email fornecido.')
+
   });
 
-  it.only("Deve validar os campos obrigatórios", () => {
+  it("Deve validar os campos obrigatórios", () => {
     cy.start();
 
     cy.submitLoginForm("papito@webdojo.com", "katana123");
@@ -89,19 +92,29 @@ describe("Formulário de Consultoria", () => {
 
     cy.contains("button", "Enviar formulário").click();
 
-    cy.contains('p', 'Digite nome e sobrenome')
+    cy.contains('label', 'Nome Completo')
+      .parent()
+      .find('p')
       .should('be.visible')
+      .should('have.text', 'Campo obrigatório')
       .and('have.class', 'text-red-400')
       .and('have.css', 'color', 'rgb(248, 113, 113)');
 
-    cy.contains('p', 'Informe um email válido')
-      .should("be.visible")
+    cy.contains('label', 'Email')
+      .parent()
+      .find('p')
+      .should('be.visible')
+      .should('have.text', 'Campo obrigatório')
       .and('have.class', 'text-red-400')
       .and('have.css', 'color', 'rgb(248, 113, 113)');
 
-    cy.contains('p', 'Você precisa aceitar os termos de uso')
-      .should("be.visible")
+    cy.contains('label', 'termos de uso')
+      .parent()
+      .find('p')
+      .should('be.visible')
+      .should('have.text', 'Você precisa aceitar os termos de uso')
       .and('have.class', 'text-red-400')
       .and('have.css', 'color', 'rgb(248, 113, 113)');
+
   });
 });
